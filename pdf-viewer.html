@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Translate PDF 阅读器</title>
+    <link rel="stylesheet" href="vendor/pdfjs/web/pdf_viewer.css">
+    <link rel="stylesheet" href="pdf-viewer.css">
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <p class="eyebrow">Edge Translate</p>
+          <h1>PDF 阅读器</h1>
+        </div>
+
+        <div class="reader-tools">
+          <div class="zoom-controls">
+            <button type="button" id="zoom-out" class="secondary-button">-</button>
+            <button type="button" id="fit-width" class="secondary-button fit-button">适应宽度</button>
+            <button type="button" id="zoom-in" class="secondary-button">+</button>
+          </div>
+
+          <label class="instant-toggle" for="instant-translate">
+            <input id="instant-translate" type="checkbox">
+            <span>立即翻译</span>
+          </label>
+        </div>
+
+        <div class="controls">
+          <button type="button" id="pick-file" class="primary-button">选择 PDF 文件</button>
+          <input id="file-input" type="file" accept="application/pdf" hidden>
+          <input id="url-input" type="url" placeholder="输入 PDF 链接或 file:// 路径">
+          <button type="button" id="load-url" class="secondary-button">打开链接</button>
+        </div>
+      </header>
+
+      <div class="status-row">
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <div id="doc-meta" class="doc-meta"></div>
+      </div>
+
+      <main class="workspace">
+        <div class="viewer-frame">
+          <div id="viewer-container" class="viewer-shell">
+            <div id="viewer" class="pdfViewer"></div>
+            <button type="button" id="translate-trigger" class="translate-trigger" hidden>译</button>
+          </div>
+        </div>
+
+        <aside id="translate-panel" class="translate-panel" hidden>
+          <header class="panel-head">
+            <strong>PDF 划词翻译</strong>
+            <button type="button" id="close-panel" class="panel-close" aria-label="关闭">×</button>
+          </header>
+          <div class="panel-body">
+            <div class="panel-section">
+              <div id="translate-status" class="panel-label status-label"></div>
+              <div id="translated-text" class="panel-text"></div>
+            </div>
+            <div id="translate-meta" class="panel-meta"></div>
+          </div>
+          <footer class="panel-actions">
+            <button type="button" id="copy-translation" class="primary-action">复制结果</button>
+            <button type="button" id="open-options" class="secondary-action">打开设置</button>
+          </footer>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="pdf-viewer.js"></script>
+  </body>
+</html>
