@@ -36,6 +36,15 @@
 - Base URL: `https://dashscope.aliyuncs.com/compatible-mode/v1`
 - Model: `qwen-mt-flash`
 
+当前版本仅支持 `qwen-mt` 系列翻译模型：
+
+- `qwen-mt-flash`
+- `qwen-mt-lite`
+- `qwen-mt-turbo`
+- `qwen-mt-plus`
+
+不建议在当前版本中配置普通对话模型或其他非 `qwen-mt` 模型，否则可能无法按预期返回翻译结果。
+
 ## 安装方式
 
 ### 方式一：本地加载开发版
@@ -46,6 +55,8 @@
 4. 点击“加载解压缩的扩展”
 5. 选择当前项目目录
 6. 插件加载完成后，点击扩展详情页中的“扩展选项”或工具栏图标进行配置
+
+![在 Edge 扩展页中安装插件](imgs/install.png)
 
 ### 方式二：从源码目录直接加载
 
@@ -68,6 +79,8 @@
    - `Model`
    - `Target Language`
    - `Display Mode`
+
+![插件设置页示意](imgs/setting.png)
 
 推荐配置如下：
 
