@@ -27,15 +27,15 @@
 
 ### 悬浮窗模式
 
-![悬浮窗翻译效果](E:/Projects/web/demo/edge-translate/imgs/Floating%20window.png)
+![悬浮窗翻译效果](imgs/Floating%20window.png)
 
 ### 侧边栏模式
 
-![侧边栏翻译效果](E:/Projects/web/demo/edge-translate/imgs/sidebar.png)
+![侧边栏翻译效果](imgs/sidebar.png)
 
 ### PDF 翻译
 
-![PDF 翻译效果](E:/Projects/web/demo/edge-translate/imgs/pdf_translator.png)
+![PDF 翻译效果](imgs/pdf_translator.png)
 
 ## 适用接口
 
@@ -64,7 +64,7 @@
 5. 选择当前项目目录
 6. 加载完成后，可点击扩展详情中的“扩展选项”，或点击工具栏图标进行配置
 
-![在 Edge 扩展页中安装插件](E:/Projects/web/demo/edge-translate/imgs/install.png)
+![在 Edge 扩展页中安装插件](imgs/install.png)
 
 ### 方法二：直接加载源码目录
 
@@ -88,7 +88,7 @@
    - `Target Language`
    - `Display Mode`
 
-![插件设置页示意](E:/Projects/web/demo/edge-translate/imgs/setting.png)
+![插件设置页示意](imgs/setting.png)
 
 推荐配置如下：
 
@@ -146,7 +146,7 @@
 - 复制翻译结果
 - 缩放阅读
 
-![PDF 阅读器翻译界面](E:/Projects/web/demo/edge-translate/imgs/pdf_translator.png)
+![PDF 阅读器翻译界面](imgs/pdf_translator.png)
 
 ## 项目结构
 
