@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Edge 划词翻译助手",
+  "version": "1.0.0",
+  "description": "支持划词翻译，并通过用户自定义的大模型 API 完成翻译。",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Edge 划词翻译助手",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}

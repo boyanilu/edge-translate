@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge 划词翻译助手设置</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Edge Translate</p>
+          <h1>配置你的大模型翻译接口</h1>
+          <p class="lead">
+            这里可以配置 DashScope 兼容接口、目标语言，以及翻译结果的显示模式。
+            你可以在“悬浮窗模式”和“侧边窗口模式”之间切换。
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-label">DashScope 示例</div>
+          <code>Base URL: https://dashscope.aliyuncs.com/compatible-mode/v1</code>
+          <code>Model: qwen-mt-flash</code>
+        </div>
+      </section>
+
+      <section class="panel">
+        <form id="settings-form" class="form">
+          <label class="field">
+            <span>Base URL</span>
+            <input
+              id="base-url"
+              name="baseURL"
+              type="url"
+              placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1"
+              required
+            >
+            <small>填写接口根地址。即使你填了 `/chat/completions`，保存时也会自动去掉。</small>
+          </label>
+
+          <label class="field">
+            <span>API Key</span>
+            <input
+              id="api-key"
+              name="apiKey"
+              type="password"
+              placeholder="sk-..."
+              required
+            >
+          </label>
+
+          <label class="field">
+            <span>模型名称</span>
+            <input
+              id="model"
+              name="model"
+              type="text"
+              placeholder="qwen-mt-flash"
+              required
+            >
+            <small>默认使用 `qwen-mt-flash`。</small>
+          </label>
+
+          <label class="field">
+            <span>目标语言</span>
+            <select id="target-lang" name="targetLang">
+              <option value="Chinese">中文</option>
+              <option value="English">英文</option>
+              <option value="Japanese">日文</option>
+              <option value="Korean">韩文</option>
+              <option value="French">法文</option>
+              <option value="German">德文</option>
+              <option value="Spanish">西班牙文</option>
+            </select>
+            <small>默认翻译为中文，可在这里切换目标语言。</small>
+          </label>
+
+          <label class="field">
+            <span>显示模式</span>
+            <select id="display-mode" name="displayMode">
+              <option value="floating">悬浮窗模式</option>
+              <option value="sidebar">侧边窗口模式</option>
+            </select>
+            <small>侧边窗口模式下，翻译结果会直接出现在页面右侧侧栏中。</small>
+          </label>
+
+          <div class="actions">
+            <button type="submit" class="primary">保存设置</button>
+            <button type="button" id="test-button" class="secondary">测试连接</button>
+          </div>
+        </form>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>

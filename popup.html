@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge 划词翻译助手</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <div class="popup-head">
+        <div>
+          <p class="eyebrow">Edge Translate</p>
+          <h1>快速设置</h1>
+        </div>
+      </div>
+
+      <form id="popup-form" class="popup-form">
+        <label class="field">
+          <span>模型名称</span>
+          <input id="model" name="model" type="text" placeholder="qwen-mt-flash" required>
+        </label>
+
+        <label class="field">
+          <span>目标语言</span>
+          <select id="target-lang" name="targetLang">
+            <option value="Chinese">中文</option>
+            <option value="English">英文</option>
+            <option value="Japanese">日文</option>
+            <option value="Korean">韩文</option>
+            <option value="French">法文</option>
+            <option value="German">德文</option>
+            <option value="Spanish">西班牙文</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>显示模式</span>
+          <select id="display-mode" name="displayMode">
+            <option value="floating">悬浮窗模式</option>
+            <option value="sidebar">侧边窗口模式</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button type="submit" class="primary">保存</button>
+          <button type="button" id="open-options" class="secondary">完整设置</button>
+        </div>
+      </form>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
