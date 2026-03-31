@@ -16,6 +16,11 @@ body.__edge_translate_sidebar_pinned {
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
+#__edge_translate_trigger__[hidden],
+#__edge_translate_panel__[hidden] {
+  display: none !important;
+}
+
 #__edge_translate_trigger__ {
   position: absolute;
   z-index: 2147483646;
