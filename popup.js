@@ -1,4 +1,5 @@
 const DEFAULT_SETTINGS = {
+  enabled: true,
   model: "qwen-mt-flash",
   targetLang: "Chinese",
   displayMode: "floating"
@@ -9,6 +10,7 @@ const statusNode = document.getElementById("status");
 const openOptionsButton = document.getElementById("open-options");
 const openPdfViewerButton = document.getElementById("open-pdf-viewer");
 const openCurrentPdfButton = document.getElementById("open-current-pdf");
+const enabledToggle = document.getElementById("extension-enabled");
 
 init().catch((error) => {
   setStatus(error.message || "加载设置失败。", "error");
@@ -28,6 +30,24 @@ form.addEventListener("submit", async (event) => {
     setStatus("快速设置已保存。", "success");
   } catch (error) {
     setStatus(error.message || "保存失败。", "error");
+  }
+});
+
+enabledToggle.addEventListener("change", async () => {
+  const enabled = enabledToggle.checked;
+
+  try {
+    const { settings } = await chrome.storage.local.get(["settings"]);
+    await chrome.storage.local.set({
+      settings: {
+        ...(settings || {}),
+        enabled
+      }
+    });
+    setStatus(enabled ? "插件已开启。" : "插件已关闭，不再监听划词。", "success");
+  } catch (error) {
+    enabledToggle.checked = !enabled;
+    setStatus(error.message || "插件开关保存失败。", "error");
   }
 });
 
@@ -66,6 +86,7 @@ async function init() {
     ...(settings || {})
   };
 
+  enabledToggle.checked = merged.enabled !== false;
   document.getElementById("model").value = merged.model || DEFAULT_SETTINGS.model;
   document.getElementById("target-lang").value = merged.targetLang || DEFAULT_SETTINGS.targetLang;
   document.getElementById("display-mode").value = merged.displayMode || DEFAULT_SETTINGS.displayMode;
@@ -73,6 +94,7 @@ async function init() {
 
 function getFormData() {
   return {
+    enabled: enabledToggle.checked,
     model: document.getElementById("model").value.trim() || DEFAULT_SETTINGS.model,
     targetLang: document.getElementById("target-lang").value || DEFAULT_SETTINGS.targetLang,
     displayMode: document.getElementById("display-mode").value || DEFAULT_SETTINGS.displayMode

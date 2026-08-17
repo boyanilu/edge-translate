@@ -1,5 +1,6 @@
 (function () {
   const DEFAULT_UI_SETTINGS = {
+    enabled: true,
     displayMode: "floating"
   };
 
@@ -9,6 +10,7 @@
     anchorPoint: null,
     pinned: false,
     requestId: 0,
+    listenersAttached: false,
     settings: { ...DEFAULT_UI_SETTINGS },
     drag: {
       active: false,
@@ -29,12 +31,6 @@
 
   loadSettings();
   chrome.storage.onChanged.addListener(handleStorageChange);
-
-  document.addEventListener("mouseup", handleSelectionChange, true);
-  document.addEventListener("keyup", handleSelectionChange, true);
-  document.addEventListener("mousedown", handleOutsideClick, true);
-  document.addEventListener("mousemove", handleDragMove, true);
-  document.addEventListener("mouseup", handleDragEnd, true);
 
   trigger.addEventListener("click", () => {
     if (!state.selectedText || state.isLoading) {
@@ -68,6 +64,7 @@
       ...DEFAULT_UI_SETTINGS,
       ...(settings || {})
     };
+    setInteractionEnabled(isExtensionEnabled());
     applyModeSettings();
   }
 
@@ -77,10 +74,21 @@
     }
 
     const previousMode = getDisplayMode();
+    const wasEnabled = isExtensionEnabled();
     state.settings = {
       ...DEFAULT_UI_SETTINGS,
       ...(changes.settings.newValue || {})
     };
+
+    const enabled = isExtensionEnabled();
+    if (wasEnabled !== enabled) {
+      setInteractionEnabled(enabled);
+    }
+
+    if (!enabled) {
+      applyModeSettings();
+      return;
+    }
 
     if (previousMode !== getDisplayMode()) {
       state.pinned = false;
@@ -94,6 +102,12 @@
 
   function applyModeSettings() {
     panel.dataset.displayMode = getDisplayMode();
+
+    if (!isExtensionEnabled()) {
+      trigger.hidden = true;
+      panel.hidden = true;
+      return;
+    }
 
     if (getDisplayMode() === "sidebar") {
       trigger.hidden = true;
@@ -110,7 +124,42 @@
     return state.settings.displayMode === "sidebar" ? "sidebar" : "floating";
   }
 
+  function isExtensionEnabled() {
+    return state.settings.enabled !== false;
+  }
+
+  function setInteractionEnabled(enabled) {
+    if (enabled && !state.listenersAttached) {
+      document.addEventListener("mouseup", handleSelectionChange, true);
+      document.addEventListener("keyup", handleSelectionChange, true);
+      document.addEventListener("mousedown", handleOutsideClick, true);
+      document.addEventListener("mousemove", handleDragMove, true);
+      document.addEventListener("mouseup", handleDragEnd, true);
+      state.listenersAttached = true;
+      return;
+    }
+
+    if (!enabled && state.listenersAttached) {
+      document.removeEventListener("mouseup", handleSelectionChange, true);
+      document.removeEventListener("keyup", handleSelectionChange, true);
+      document.removeEventListener("mousedown", handleOutsideClick, true);
+      document.removeEventListener("mousemove", handleDragMove, true);
+      document.removeEventListener("mouseup", handleDragEnd, true);
+      state.listenersAttached = false;
+    }
+
+    if (!enabled) {
+      state.pinned = false;
+      updatePinUI();
+      hideAll();
+    }
+  }
+
   function handleSelectionChange(event) {
+    if (!isExtensionEnabled()) {
+      return;
+    }
+
     if (root.contains(event.target)) {
       return;
     }
@@ -205,6 +254,10 @@
   }
 
   async function translateSelection(options = {}) {
+    if (!isExtensionEnabled()) {
+      return;
+    }
+
     const rect = options.rect || getSelectionRect();
     const currentRequestId = ++state.requestId;
 

@@ -1,6 +1,7 @@
 import OpenAI from "./vendor/openai/index.mjs";
 
 const DEFAULT_SETTINGS = {
+  enabled: true,
   baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
   apiKey: "",
   model: "qwen-mt-flash",
@@ -102,6 +103,10 @@ function createOpenAIClient(settings) {
 }
 
 function validateSettings(settings) {
+  if (settings.enabled === false) {
+    throw new Error("插件已关闭，请先在工具栏弹窗中开启。");
+  }
+
   if (!settings.baseURL && !settings.apiUrl) {
     throw new Error("请先在设置页填写 Base URL。");
   }

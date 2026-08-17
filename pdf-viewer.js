@@ -33,6 +33,8 @@ const state = {
   pdfDocument: null,
   selectedText: "",
   requestId: 0,
+  pluginEnabled: true,
+  translationListenersAttached: false,
   instantTranslate: DEFAULT_VIEWER_SETTINGS.instantTranslate
 };
 
@@ -86,9 +88,7 @@ instantTranslateToggle.addEventListener("change", () => {
   }
 });
 
-viewerContainer.addEventListener("mouseup", handleSelectionChange, true);
-document.addEventListener("mousedown", handleOutsideClick, true);
-document.addEventListener("keydown", handleKeyboardShortcut, true);
+chrome.storage.onChanged.addListener(handleStorageChange);
 translateTrigger.addEventListener("click", () => {
   void translateSelection();
 });
@@ -120,11 +120,14 @@ async function bootstrap() {
     return;
   }
 
-  setStatus("请选择一个 PDF 文件，或输入 PDF 地址。", "");
+  setStatus(
+    state.pluginEnabled ? "请选择一个 PDF 文件，或输入 PDF 地址。" : "插件已关闭，PDF 划词翻译已停用。",
+    ""
+  );
 }
 
 async function loadViewerSettings() {
-  const result = await chrome.storage.local.get([PDF_SETTINGS_KEY]);
+  const result = await chrome.storage.local.get([PDF_SETTINGS_KEY, "settings"]);
   const settings = {
     ...DEFAULT_VIEWER_SETTINGS,
     ...(result[PDF_SETTINGS_KEY] || {})
@@ -132,6 +135,58 @@ async function loadViewerSettings() {
 
   state.instantTranslate = Boolean(settings.instantTranslate);
   instantTranslateToggle.checked = state.instantTranslate;
+  setTranslationEnabled(result.settings?.enabled !== false);
+}
+
+function handleStorageChange(changes, areaName) {
+  if (areaName !== "local" || !changes.settings) {
+    return;
+  }
+
+  const enabled = changes.settings.newValue?.enabled !== false;
+  if (enabled === state.pluginEnabled) {
+    return;
+  }
+
+  setTranslationEnabled(enabled);
+  setStatus(
+    enabled
+      ? state.pdfDocument
+        ? "插件已开启，可以直接划词翻译。"
+        : "插件已开启。"
+      : "插件已关闭，PDF 划词翻译已停用。",
+    enabled ? "success" : ""
+  );
+}
+
+function setTranslationEnabled(enabled) {
+  state.pluginEnabled = enabled;
+  instantTranslateToggle.disabled = !enabled;
+
+  if (enabled && !state.translationListenersAttached) {
+    viewerContainer.addEventListener("mouseup", handleSelectionChange, true);
+    document.addEventListener("mousedown", handleOutsideClick, true);
+    document.addEventListener("keydown", handleKeyboardShortcut, true);
+    state.translationListenersAttached = true;
+    return;
+  }
+
+  if (!enabled && state.translationListenersAttached) {
+    viewerContainer.removeEventListener("mouseup", handleSelectionChange, true);
+    document.removeEventListener("mousedown", handleOutsideClick, true);
+    document.removeEventListener("keydown", handleKeyboardShortcut, true);
+    state.translationListenersAttached = false;
+  }
+
+  if (!enabled) {
+    state.selectedText = "";
+    state.requestId += 1;
+    hideTrigger();
+    translatePanel.hidden = true;
+    translatedTextNode.textContent = "";
+    translateStatusNode.textContent = "";
+    translateMetaNode.textContent = "";
+  }
 }
 
 async function saveViewerSettings() {
@@ -190,7 +245,10 @@ async function loadPdfDocument(source, label) {
     translateStatusNode.textContent = "";
     translateMetaNode.textContent = "";
     docMetaNode.textContent = `${label} · 共 ${pdfDocument.numPages} 页`;
-    setStatus("PDF 已加载，可以直接划词翻译。", "success");
+    setStatus(
+      state.pluginEnabled ? "PDF 已加载，可以直接划词翻译。" : "PDF 已加载，但插件当前处于关闭状态。",
+      state.pluginEnabled ? "success" : ""
+    );
   } catch (error) {
     console.error("[edge-translate:pdf] load failed:", error);
     setStatus(error.message || "PDF 加载失败。", "error");
@@ -209,6 +267,10 @@ async function closeCurrentDocument() {
 }
 
 function handleSelectionChange(event) {
+  if (!state.pluginEnabled) {
+    return;
+  }
+
   const selection = window.getSelection();
   const text = selection ? selection.toString().trim() : "";
 
@@ -265,6 +327,10 @@ function handleKeyboardShortcut(event) {
 }
 
 async function translateSelection() {
+  if (!state.pluginEnabled) {
+    return;
+  }
+
   const text = state.selectedText.trim();
   if (!text) {
     return;

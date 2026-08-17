@@ -1,4 +1,5 @@
 const DEFAULT_SETTINGS = {
+  enabled: true,
   baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
   apiKey: "",
   model: "qwen-mt-flash",
@@ -14,18 +15,15 @@ init();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const settings = getFormData();
 
-  await chrome.storage.local.set({ settings });
+  await saveFormSettings();
   setStatus("设置已保存。刷新目标网页后即可应用新的显示模式。", "success");
 });
 
 testButton.addEventListener("click", async () => {
-  const settings = getFormData();
-
   try {
     setStatus("正在测试连接...", "");
-    await chrome.storage.local.set({ settings });
+    await saveFormSettings();
 
     const response = await chrome.runtime.sendMessage({
       type: "test-connection",
@@ -75,6 +73,18 @@ function getFormData() {
     targetLang: document.getElementById("target-lang").value || DEFAULT_SETTINGS.targetLang,
     displayMode: document.getElementById("display-mode").value || DEFAULT_SETTINGS.displayMode
   };
+}
+
+async function saveFormSettings() {
+  const { settings } = await chrome.storage.local.get(["settings"]);
+  const nextSettings = {
+    ...DEFAULT_SETTINGS,
+    ...(settings || {}),
+    ...getFormData()
+  };
+
+  await chrome.storage.local.set({ settings: nextSettings });
+  return nextSettings;
 }
 
 function normalizeBaseURL(input) {

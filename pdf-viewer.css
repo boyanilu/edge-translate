@@ -222,6 +222,11 @@ body {
   box-shadow: 0 12px 28px rgba(15, 118, 110, 0.24);
 }
 
+.translate-trigger[hidden],
+.translate-panel[hidden] {
+  display: none !important;
+}
+
 .translate-panel {
   position: fixed;
   top: 110px;

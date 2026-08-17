@@ -16,6 +16,23 @@
       </div>
 
       <form id="popup-form" class="popup-form">
+        <div class="enable-setting">
+          <div class="enable-copy">
+            <strong>启用划词翻译</strong>
+            <span id="enabled-description">关闭后不监听划词，也不显示翻译窗口</span>
+          </div>
+          <label class="switch" aria-label="启用划词翻译">
+            <input
+              id="extension-enabled"
+              name="enabled"
+              type="checkbox"
+              role="switch"
+              aria-describedby="enabled-description"
+            >
+            <span class="switch-track" aria-hidden="true"></span>
+          </label>
+        </div>
+
         <label class="field">
           <span>模型名称</span>
           <input id="model" name="model" type="text" placeholder="qwen-mt-flash" required>
